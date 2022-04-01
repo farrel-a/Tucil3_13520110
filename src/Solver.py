@@ -257,7 +257,8 @@ class Puzzle_15_Solver:
                 self._searchLog.append(deepcopy(cmd_arr[1]))
 
             self._stopTime = time.time()
-            self._displayStep()
+            if (len(self._searchLog) != 0):
+                self._displayStep()
             print(f"Created node = {created_node}")
             print(f"Time elapsed {self._stopTime - self._startTime:.8f} s")
 
