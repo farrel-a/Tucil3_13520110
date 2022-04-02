@@ -8,6 +8,7 @@ if __name__ == "__main__":
     print("Welcome to 15 Puzzle Solver")
     print("Enter 1 for manual input")
     print("Enter 2 for test file input")
+    print("Enter 3 for random generated input")
     try:
         user_input = int(input(">>> "))
         if (user_input == 1):
@@ -15,6 +16,9 @@ if __name__ == "__main__":
             solver.solve()
         elif (user_input == 2):
             solver.readMatrixFromFile()
+            solver.solve()
+        elif (user_input == 3):
+            solver.readMatrixRandom()
             solver.solve()
         else:
             print("invalid input")

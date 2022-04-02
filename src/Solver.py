@@ -1,6 +1,8 @@
+from numbers import Number
 import os
 import platform
 from copy import deepcopy
+import random
 import time
 
 class Puzzle_15_Solver:
@@ -360,4 +362,14 @@ class Puzzle_15_Solver:
             self.setMatrix(mat)
         else:
             raise Exception("File not found !")
+    
+    def readMatrixRandom(self):
+        # read 15 puzzle matrix from random generated number
+        list_num = [i+1 for i in range(16)]
+        for i in range(4):
+            for j in range(4):
+                num = random.choice(list_num)
+                self._matrix[i][j] = num
+                list_num.remove(num)
+
 
