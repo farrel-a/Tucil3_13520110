@@ -4,7 +4,9 @@ from copy import deepcopy
 import time
 
 class Puzzle_15_Solver:
+    # CTOR
     def __init__(self):
+        # PRIVATE ATTRIBUTES
         self._matrix = [
                         [1,2,3,4],
                         [5,6,7,8],
@@ -16,6 +18,7 @@ class Puzzle_15_Solver:
         self._startTime = 0.0
         self._stopTime = 0.0
     
+    # PRIVATE METHODS
     def _validMatrix(self, matrixInput):
         # check whether matrix is valid 15-puzzle matrix
         arr = []
@@ -35,6 +38,7 @@ class Puzzle_15_Solver:
             return True
 
     def _getIndex(self, a):
+        # get index of element a in self._matrix
         for i in range(4):
             for j in range(4):
                 if (self._matrix[i][j] == a):
@@ -42,6 +46,7 @@ class Puzzle_15_Solver:
         raise Exception("Index not found")
     
     def _getIndexMatInput(self, mat, a):
+        # get index from a given matrix input
         for i in range(4):
             for j in range(4):
                 if (mat[i][j] == a):
@@ -63,6 +68,7 @@ class Puzzle_15_Solver:
         return result
     
     def _getAllLess(self, show = False):
+        # get all _less in self._matrix
         result = 0
         a = 1
         arr = []
@@ -81,6 +87,7 @@ class Puzzle_15_Solver:
         return result
     
     def _getX(self):
+        # get X from self._matrix
         X = 0
         idx_16i, idx_16j = self._getIndex(16)
         if ((idx_16i == 0 or idx_16i == 2) and (idx_16j == 1 or idx_16j == 3)):
@@ -89,8 +96,8 @@ class Puzzle_15_Solver:
             X = 1
         return X
 
-    
     def _reachAble(self):
+        # Check whether solution is reachable
         all_less = self._getAllLess()
         X = self._getX()
         total = all_less + X
@@ -98,6 +105,7 @@ class Puzzle_15_Solver:
         return total%2 == 0 
 
     def _gCost(self):
+        # compute g cost of current self._matrix
         a = 1
         cost = 0
         for i in range(4):
@@ -108,6 +116,7 @@ class Puzzle_15_Solver:
         return cost
     
     def _isTarget(self):
+        # check whether current self._matrix is solution
         a = 1
         for i in range(4):
             for j in range(4):
@@ -117,18 +126,22 @@ class Puzzle_15_Solver:
         return True
     
     def _ableMoveUp(self):
+        # check whether able to move up
         i, _ = self._getIndex(16)
         return True if i-1 >= 0 else False
     
     def _ableMoveDown(self):
+        # check whether able to move down
         i, _ = self._getIndex(16)
         return True if i+1 <= 3 else False
     
     def _ableMoveRight(self):
+        # check whether able to move right
         _, j = self._getIndex(16)
         return True if j+1 <= 3 else False
 
     def _ableMoveLeft(self):
+        # check whether able to move left
         _, j = self._getIndex(16)
         return True if j-1 >= 0 else False
     
@@ -169,6 +182,7 @@ class Puzzle_15_Solver:
             print("Unable to move right")
     
     def _displayStep(self):
+        # display solution step
         step = []
         self._searchLog.reverse()
         prev_i, prev_j = self._getIndexMatInput(self._searchLog[0], 16)
@@ -190,7 +204,10 @@ class Puzzle_15_Solver:
             print()
             step_num += 1     
     
+    # PUBLIC METHODS
     def solve(self):
+        # solve self._matrix
+        # initial information
         print("--Initial Matrix--")
         self.displayMatrix()
         print()
@@ -199,65 +216,85 @@ class Puzzle_15_Solver:
         print(f"X = {self._getX()}")
         print(f"Sigma = {self._getAllLess()} + {self._getX()} = {self._getAllLess() + self._getX()}")
         print()
+
         if (self._reachAble()):
             print("--Initial Matrix--")
             self.displayMatrix()
             print()
 
+            # algorithm start (start time)
             self._startTime = time.time()
             fCost = 0
             created_node = 1
             created_nodes = []
             prev_move = ""
             while(not(self._isTarget())):
+                mat_states = [states[1] for states in self._states]
                 if (self._ableMoveUp() and prev_move != "down"):
+                    # able to move up and prev_move not "down", move up and add to queue in self._states
                     self._moveUp()
-                    gCost = self._gCost()
-                    cCost = fCost + 1 + gCost
-                    created_node+=1
-                    created_nodes.append(created_node)
-                    mat = deepcopy(self._matrix)
-                    self._states.append([created_node, mat, cCost, fCost+1, "up"])
-                    self._states.sort(key = lambda x : x[2])
-                    self._moveDown()
+                    if (self._matrix not in self._searchLog and self._matrix not in mat_states):
+                        gCost = self._gCost()
+                        cCost = fCost + 1 + gCost
+                        created_node+=1
+                        created_nodes.append(created_node)
+                        mat = deepcopy(self._matrix)
+                        self._states.append([created_node, mat, cCost, fCost+1, "up"])
+                        self._states.sort(key = lambda x : x[2])
+                        self._moveDown()
+                    else:
+                        self._moveDown()
 
                 if (self._ableMoveDown() and prev_move != "up"):
+                    # able to move down and prev_move not "up", move down add to queue in self._states
                     self._moveDown()
-                    gCost = self._gCost()
-                    cCost = fCost + 1 + gCost
-                    created_node+=1
-                    created_nodes.append(created_node)
-                    mat = deepcopy(self._matrix)
-                    self._states.append([created_node, mat, cCost, fCost+1, "down"])
-                    self._states.sort(key = lambda x : x[2])
-                    self._moveUp()
+                    if (self._matrix not in self._searchLog and self._matrix not in mat_states):
+                        gCost = self._gCost()
+                        cCost = fCost + 1 + gCost
+                        created_node+=1
+                        created_nodes.append(created_node)
+                        mat = deepcopy(self._matrix)
+                        self._states.append([created_node, mat, cCost, fCost+1, "down"])
+                        self._states.sort(key = lambda x : x[2])
+                        self._moveUp()
+                    else:
+                        self._moveUp()
                 
                 if (self._ableMoveLeft() and prev_move != "right"):
+                    # able to move left and prev_move not "right", move left and add to queue in self._states
                     self._moveLeft()
-                    gCost = self._gCost()
-                    cCost = fCost + 1 + gCost
-                    created_node+=1
-                    created_nodes.append(created_node)
-                    mat = deepcopy(self._matrix)
-                    self._states.append([created_node, mat, cCost, fCost+1, "left"])
-                    self._states.sort(key = lambda x : x[2])
-                    self._moveRight()
+                    if (self._matrix not in self._searchLog and self._matrix not in mat_states):
+                        gCost = self._gCost()
+                        cCost = fCost + 1 + gCost
+                        created_node+=1
+                        created_nodes.append(created_node)
+                        mat = deepcopy(self._matrix)
+                        self._states.append([created_node, mat, cCost, fCost+1, "left"])
+                        self._states.sort(key = lambda x : x[2])
+                        self._moveRight()
+                    else:
+                        self._moveRight()
 
                 if (self._ableMoveRight() and prev_move != "left"):
+                    # able to move right and prev_move not "left", move right and add to queue in self._states
                     self._moveRight()
-                    gCost = self._gCost()
-                    cCost = fCost + 1 + gCost
-                    created_node+=1
-                    created_nodes.append(created_node)
-                    mat = deepcopy(self._matrix)
-                    self._states.append([created_node, mat, cCost, fCost+1, "right"])
-                    self._states.sort(key = lambda x : x[2])
-                    self._moveLeft()
+                    if (self._matrix not in self._searchLog and self._matrix not in mat_states):
+                        gCost = self._gCost()
+                        cCost = fCost + 1 + gCost
+                        created_node+=1
+                        created_nodes.append(created_node)
+                        mat = deepcopy(self._matrix)
+                        self._states.append([created_node, mat, cCost, fCost+1, "right"])
+                        self._states.sort(key = lambda x : x[2])
+                        self._moveLeft()
+                    else:
+                        self._moveLeft()
 
-                # print(self._states)
                 cmd_arr = self._states[0]
                 fCost = cmd_arr[3]
                 prev_move = cmd_arr[4]
+
+                # if state already checked
                 while (cmd_arr[1] in self._searchLog):
                     self._states.pop(0)
                     cmd_arr = deepcopy(self._states[0])
@@ -269,7 +306,10 @@ class Puzzle_15_Solver:
                 self._matrix = deepcopy(cmd_arr[1])
                 self._searchLog.append(deepcopy(cmd_arr[1]))
 
+            # algorithm finish (stop time)
             self._stopTime = time.time()
+
+            # display step and time elapsed
             if (len(self._searchLog) != 0):
                 self._displayStep()
             print(f"Created node = {created_node}")
@@ -281,18 +321,21 @@ class Puzzle_15_Solver:
             print("Solution is not reachable !")
     
     def setMatrix(self, matrixInput):
+        # set self._matrix to a given matrixInput
         if (self._validMatrix(matrixInput)):
             self._matrix = matrixInput
         else:
             print("Invalid Matrix Input")
 
     def displayMatrix(self):
+        # display self._matrix
         for i in range(len(self._matrix)):
             for j in range(len(self._matrix[i])):
                 print(self._matrix[i][j], end=" ")
             print()
 
     def readMatrixFromInput(self):
+        # read matrix from user keyboard input
         mat = []
         for i in range(4):
             inputArr = input().split()
@@ -301,6 +344,7 @@ class Puzzle_15_Solver:
         self.setMatrix(mat)
     
     def readMatrixFromFile(self):
+        # read matrix from file in /test
         OS = platform.system()
         filename = input("Insert filename in /test : ")
         if (OS == "Windows"):
