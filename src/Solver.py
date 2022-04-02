@@ -65,13 +65,19 @@ class Puzzle_15_Solver:
     def _getAllLess(self, show = False):
         result = 0
         a = 1
+        arr = []
         for i in range(4):
             for j in range(4):
                 less = self._less(self._matrix[i][j])
                 if show:
-                    print(f"{a} = {less}")
+                   arr.append([self._matrix[i][j], less])
                 result += less
                 a += 1
+        if show:
+            arr.sort(key = lambda x : x[0])
+            for a in arr:
+                print(f"{a[0]} = {a[1]}")
+
         return result
     
     def _getX(self):
@@ -309,5 +315,5 @@ class Puzzle_15_Solver:
             mat = [[int(n) for n in line.split(" ")] for line in f]
             self.setMatrix(mat)
         else:
-            print("File not found !")
+            raise Exception("File not found !")
 
