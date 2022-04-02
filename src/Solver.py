@@ -252,6 +252,13 @@ class Puzzle_15_Solver:
                 cmd_arr = self._states[0]
                 fCost = cmd_arr[3]
                 prev_move = cmd_arr[4]
+                while (cmd_arr[1] in self._searchLog):
+                    self._states.pop(0)
+                    cmd_arr = deepcopy(self._states[0])
+                    fCost = cmd_arr[3]
+                    prev_move = cmd_arr[4]
+                if (cmd_arr[1] in self._searchLog):
+                    raise Exception("duplicate")
                 self._states.pop(0)
                 self._matrix = deepcopy(cmd_arr[1])
                 self._searchLog.append(deepcopy(cmd_arr[1]))
@@ -289,9 +296,9 @@ class Puzzle_15_Solver:
         OS = platform.system()
         filename = input("Insert filename in /test : ")
         if (OS == "Windows"):
-            path = f"test\\{filename}"
+            path = f"..\\test\\{filename}"
         elif (OS == "Linux" or OS == "Darwin"):
-            path = f"test/{filename}"
+            path = f"../test/{filename}"
         else:
             raise Exception("Program only supports Windows, Linux, and Mac OS")
 
