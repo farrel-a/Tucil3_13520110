@@ -267,7 +267,9 @@ class Puzzle_15_Solver:
             if (len(self._searchLog) != 0):
                 self._displayStep()
             print(f"Created node = {created_node}")
-            print(f"Time elapsed {self._stopTime - self._startTime:.8f} s")
+            timeElapsed = self._stopTime - self._startTime
+            timeElapsedMS = timeElapsed*1000.00
+            print(f"Time elapsed {timeElapsedMS} ms")
 
         else:
             print("Solution is not reachable !")
