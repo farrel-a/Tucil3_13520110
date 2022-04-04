@@ -326,7 +326,7 @@ class Puzzle_15_Solver:
         if (self._validMatrix(matrixInput)):
             self._matrix = matrixInput
         else:
-            print("Invalid Matrix Input")
+            raise Exception("Invalid Matrix Input")
 
     def displayMatrix(self):
         # display self._matrix
